@@ -27,8 +27,8 @@ Vue.component("Dashboard", {
     >
       <h1 class="h2">{{title}}</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
-      <CompactButton text="Novo" size="xl" :outlined="true" color="secondary" data-toggle="modal" data-target="#modalExemplo"/>
-    </div>
+        <ModalButton text="Novo" size="xl" :outlined="true" color="secondary"/>
+      </div>
     </div>
     <div class="d-flex flex-row justify-content-between flex-wrap">
       <div class="col-8 my-5 mx-auto"><ChartArea vid="id3" type="pie" title="Título Gráfico" :data='[

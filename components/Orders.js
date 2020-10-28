@@ -27,7 +27,7 @@ Vue.component("Orders", {
     >
       <h1 class="h2">{{title}}</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
-      <CompactButton text="Novo" size="xl" :outlined="true" color="secondary"/>
+      <ModalButton text="Novo" size="xl" :outlined="true" color="secondary"/>
     </div>
     </div>
     <InfoTable :dataTable="dataTable"></InfoTable>

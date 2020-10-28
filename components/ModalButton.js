@@ -1,7 +1,7 @@
-Vue.component("CompactButton", {
+Vue.component("ModalButton", {
   data: () => ({}),
   props: ["text", "icon", "size", "outlined", "color"],
-  template: `<button :class="computedClass">
+  template: `<button :class="computedClass" data-toggle="modal" data-target="#modalExemplo">
     <span :data-feather="icon"></span> {{text}}
   </button>`,
   computed: {
