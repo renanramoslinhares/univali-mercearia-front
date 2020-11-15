@@ -21,7 +21,6 @@
       <Navbar></Navbar>
       <div class="container-fluid">
         <div class="row">
-          <Modal title="Título do modal" content="Content ..."></Modal>
           <Sidebar @out="(xxx) => {currentPage = xxx.component;}"></Sidebar>
           <component :is="currentPage"></component>
         </div>
@@ -40,6 +39,7 @@
     <script src="components/ChartArea.js"></script>
     <script src="components/ModalButton.js"></script>
     <script src="components/Modal.js"></script>
+    <script src="components/ModalOrder.js"></script>
 
     <script src="components/Dashboard.js"></script>
     <script src="components/Orders.js"></script>

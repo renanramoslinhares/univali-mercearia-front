@@ -1,4 +1,4 @@
-Vue.component("Modal", {
+Vue.component("ModalOrder", {
   data: () => ({}),
   props: ["page"],
   computed: {
@@ -25,12 +25,25 @@ Vue.component("Modal", {
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{title}}</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Criar/Editar Pedido</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">{{content}}</div>
+      <div class="modal-body">
+      
+      <form>
+        <div class="form-group">
+          <label>Input</label>
+          <input type="text" class="form-control" placeholder="Input">
+        </div>
+        <div class="form-group">
+          <label>Input</label>
+          <input type="text" class="form-control" placeholder="Input">
+        </div>
+      </form>
+      
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         <button type="button" class="btn btn-primary">Salvar mudanças</button>
