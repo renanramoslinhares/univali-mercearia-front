@@ -57,7 +57,7 @@
         <v-divider></v-divider>
         <v-card-text style="height: 300px">
           <p>Voce tem certeza?</p>
-          <p>Isto apagará o cadastro produto permanentemente.</p>
+          <p>Isto apagará o cadastro deste produto permanentemente.</p>
           <v-btn class="col-5" color="purple" dark @click.stop="remove(idEdit)">
             DELETAR
           </v-btn>
@@ -98,41 +98,34 @@ export default {
     save() {
       const selectedFunction = this.idEdit ? updateProduct : createProduct;
       selectedFunction(this.form, this.idEdit)
-        .then((response) => {
-          console.log(
-            this.idEdit ? "updateProduct" : "createProduct",
-            " -> response",
-            response
-          );
-
+        .then((resp) => {
           this.$emit("alert", {
-            text: "Salvo com Sucesso!",
-            isError: false,
+            content: resp.errors ? resp.errors : "Salvo com Sucesso!",
+            isError: Boolean(resp.errors),
           });
+          if (!resp.errors) this.$emit("input", false);
         })
         .catch((error) => {
           console.error("Error: ", error);
 
           this.$emit("alert", {
-            text: "Erro!",
+            content: "Erro!",
             isError: true,
           });
         });
     },
     async remove(idEdit) {
       await deleteProduct(idEdit)
-        .then((response) => {
-          console.log("deleteClient -> response", response);
-
+        .then(() => {
           this.$emit("alert", {
-            text: "Removido com sucesso!",
+            content: "Removido com sucesso!",
             isError: false,
           });
         })
         .catch((error) => {
           console.error("Error: ", error);
           this.$emit("alert", {
-            text: "Erro!",
+            content: "Erro!",
             isError: true,
           });
         });

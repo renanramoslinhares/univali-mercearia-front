@@ -1,40 +1,59 @@
 import {
   createElement,
-  readList,
+  readData,
   updateElement,
   deleteElement,
 } from "./crudService.js";
 
-export const createOrder = (form) =>
+export const createOrder = (data) =>
   createElement("pedido", {
-    st_inativo: form.isActive,
-    no_cliente: form.name,
-    de_email: form.email,
-    nu_cpf: form.cpf,
+    cliente: Number(data.clientId),
+    vr_pedido: Number(data.totalValue),
+    itens: data.items.map((item) => ({
+      produto: Number(item.productId),
+      qt_produto_item: Number(item.productAmount),
+      vr_unitario: Number(item.productValue),
+    })),
   });
 
+export const readOrderById = (elementId) =>
+  readData("pedido/" + elementId).then((element) => ({
+    id: element.id_pedido,
+    client: {
+      id: element.cliente.id_cliente,
+      name: element.cliente.no_cliente,
+    },
+    items: element.itens.map((item) => ({
+      productId: item.produto.id_produto,
+      productAmount: item.qt_produto_item,
+      productValue: item.vr_unitario,
+    })),
+    totalValue: element.vr_pedido,
+  }));
+
 export const readOrders = () =>
-  readList("pedido").then(
-    (response) => {
-      console.log("response", response);
-    }
-    // response.map((element) => ({
-    //   id: element.id_pedido,
-    //   name: element.no_pedido,
-    //   amount: element.qt_estoque,
-    //   description: element.de_pedido,
-    //   isActive: element.st_inativo,
-    // }))
+  readData("pedido").then((response) =>
+    response.map((element) => ({
+      id: element.id_pedido,
+      client: {
+        id: element.cliente.id_cliente,
+        name: element.cliente.no_cliente,
+      },
+      totalValue: element.vr_pedido,
+    }))
   );
 
-export const updateOrder = (form, elementId) =>
+export const updateOrder = (data, elementId) =>
   updateElement(
     "pedido",
     {
-      st_inativo: form.isActive,
-      no_cliente: form.name,
-      de_email: form.email,
-      nu_cpf: form.cpf,
+      cliente: Number(data.clientId),
+      vr_pedido: Number(data.totalValue),
+      itens: data.items.map((item) => ({
+        produto: Number(item.productId),
+        qt_produto_item: Number(item.productAmount),
+        vr_unitario: Number(item.productValue),
+      })),
     },
     elementId
   );

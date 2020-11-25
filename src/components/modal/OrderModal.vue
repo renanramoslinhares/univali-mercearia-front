@@ -13,23 +13,13 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>
-            {{ value.data ? "Editar Pedido" : "Novo Pedido" }}
+            {{ value.idEdit ? "Editar Pedido" : "Novo Pedido" }}
           </v-toolbar-title>
         </v-toolbar>
       </div>
       <v-card-text>
-        <v-switch
-          v-model="form.isActive"
-          :label="form.isActive ? 'ATIVO' : 'INATIVO'"
-        ></v-switch>
-        <v-text-field
-          label="Cliente"
-          outlined
-          v-model="form.clientName"
-        ></v-text-field>
-
         <v-autocomplete
-          v-model="form.clientName"
+          v-model="form.clientId"
           :items="clientList"
           item-text="name"
           item-value="id"
@@ -38,48 +28,35 @@
           label="Clientes"
           class="mt-5"
         ></v-autocomplete>
-        <!-- <v-text-field
-          label="Quantidade"
-          type="number"
-          outlined
-          v-model="amount"
-        ></v-text-field> -->
-        <!-- <v-textarea
-          outlined
-          label="Descrição"
-          rows="3"
-          v-model="description"
-        ></v-textarea> -->
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th
-                  v-for="(header, key) in ['Id', 'Nome', 'Preço', 'Quantidade']"
-                  :key="key"
-                  class="text-left"
+        <v-simple-table v-if="form.items.length">
+          <thead>
+            <tr>
+              <th
+                v-for="(header, key) in ['', 'Nome', 'Preço', 'Quantidade']"
+                :key="key"
+                class="text-left"
+              >
+                {{ header }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, key) in form.items" :key="key">
+              <td>
+                <v-btn icon width="5" @click.stop="removeItemList(key)">
+                  <v-icon x-small>mdi-close</v-icon></v-btn
                 >
-                  {{ header }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, key) in form.items" :key="key">
-                <td class="text-left">
-                  <v-btn @click.stop="removeItemList(key)">Remover</v-btn>
-                </td>
-                <td class="text-left">{{ item.productId }}</td>
-                <td class="text-left">
-                  {{
-                    productList.find((product) => product.id === item.productId)
-                      .name
-                  }}
-                </td>
-                <td class="text-left">R$ {{ item.productValue }}</td>
-                <td class="text-left">{{ item.productAmount }}</td>
-              </tr>
-            </tbody>
-          </template>
+              </td>
+              <td class="text-left">
+                {{
+                  productList.find((product) => product.id === item.productId)
+                    .name
+                }}
+              </td>
+              <td class="text-center">R$ {{ item.productValue }}</td>
+              <td class="text-center">{{ item.productAmount }}</td>
+            </tr>
+          </tbody>
         </v-simple-table>
         <v-btn
           small
@@ -95,11 +72,12 @@
           Salvar
         </v-btn>
         <v-btn
+          v-if="value.idEdit"
           class="col-3 ml-3"
           outlined
           color="purple"
           dark
-          @click.stop="remove()"
+          @click.stop="dialogConfirm = !dialogConfirm"
         >
           Excluir
         </v-btn>
@@ -147,66 +125,53 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogConfirm" scrollable max-width="300px">
+      <v-card>
+        <v-card-title>Confirmar exclusão</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text style="height: 300px">
+          <p>Voce tem certeza?</p>
+          <p>Isto apagará o cadastro deste pedido permanentemente.</p>
+          <v-btn class="col-5" color="purple" dark @click.stop="remove(idEdit)">
+            DELETAR
+          </v-btn>
+          <v-btn
+            class="col-5 ml-3"
+            color="purple"
+            outlined
+            @click.stop="dialogConfirm = !dialogConfirm"
+          >
+            CANCELAR
+          </v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 <script>
+import { readClients } from "@/services/crudClient.js";
+import { readProducts } from "@/services/crudProduct.js";
+
+import {
+  createOrder,
+  updateOrder,
+  readOrderById,
+  deleteOrder,
+} from "@/services/crudOrder.js";
+
 export default {
   name: "OrderModal",
   props: ["value"],
   data: () => ({
     dialog: false,
+    dialogConfirm: false,
     idEdit: "",
     form: {
-      isActive: true,
-      clientName: "",
+      clientId: "",
       items: [],
     },
     clientList: [],
-    productList: [
-      {
-        id: 0,
-        name: "Gilette Prestobarba",
-        amount: 50,
-        description:
-          "Aparelho de Barbear Descartável Gillette Prestobarba Ultragrip - 2 Unidades",
-        isActive: true,
-      },
-      {
-        id: 1,
-        name: "Maionese Hellman's 335g",
-        amount: 100,
-        description: "",
-        isActive: true,
-      },
-      {
-        id: 2,
-        name: "Banana Prata Kg",
-        amount: 20,
-        description: "",
-        isActive: false,
-      },
-      {
-        id: 3,
-        name: "Cerveja Heineken 330ml",
-        amount: 240,
-        description: "",
-        isActive: true,
-      },
-      {
-        id: 4,
-        name: "Pão de Queijo Forno de Minas 1Kg",
-        amount: 30,
-        description: "",
-        isActive: true,
-      },
-      {
-        id: 5,
-        name: "Desinfetante Pinho Sol Original 500ml",
-        amount: 50,
-        description: "",
-        isActive: true,
-      },
-    ],
+    productList: [],
     productId: "",
     productAmount: "",
     productValue: "",
@@ -225,39 +190,69 @@ export default {
         productAmount: this.productAmount,
         productValue: this.productValue,
       });
+
+      this.productId = "";
+      this.productAmount = "";
+      this.productValue = "";
+
       this.dialog = false;
 
       this.$emit("alert", {
-        text: "Sucesso: Item inserido!",
+        content: "Sucesso: Item inserido!",
         isError: false,
       });
     },
     save() {
-      // this.idEdit
-      console.log("save -> this.form", this.form);
+      const selectedFunction = this.idEdit ? updateOrder : createOrder;
+      selectedFunction(
+        {
+          clientId: this.form.clientId,
+          items: this.form.items,
+          totalValue: this.totalValue,
+        },
+        this.idEdit
+      ).then((resp) => {
+        if (!resp.errors) this.$emit("input", false);
+        this.$emit("alert", {
+          content: resp.errors ? resp.errors : "Salvo com Sucesso!",
+          isError: Boolean(resp.errors),
+        });
+      });
     },
-    remove() {
-      // this.idEdit
+    remove(idEdit) {
+      deleteOrder(idEdit).then((resp) => {
+        if (!resp.errors) this.$emit("input", false);
+        this.$emit("alert", {
+          content: resp.errors ? resp.errors : "Salvo com Sucesso!",
+          isError: Boolean(resp.errors),
+        });
+      });
     },
     removeItemList(key) {
-      console.log("removeItemList -> key", key);
       this.form.items.splice(key, 1);
+    },
+    async readById(idEdit) {
+      readOrderById(idEdit).then((resp) => {
+        this.form = {
+          clientId: resp ? resp.client.id : "",
+          items: resp ? resp.items : [],
+        };
+      });
     },
   },
   watch: {
     value(value) {
+      this.idEdit = value.idEdit;
       if (!value) {
         this.productId = "";
         this.productAmount = "";
         this.productValue = "";
+        this.form = {
+          clientId: "",
+          items: [],
+        };
       }
-      console.log("value -> value.data", value.data);
-      this.idEdit = value.data ? value.data.id : "";
-      this.form = {
-        clientName: value.data ? value.data.clientName : "",
-        items: value.data ? value.data.items : [],
-        isActive: value.data ? value.data.isActive : "",
-      };
+      if (value.idEdit) this.readById(this.idEdit);
     },
   },
   mounted() {
@@ -265,6 +260,11 @@ export default {
     window.addEventListener("keyup", function (ev) {
       if (ev.key === "Escape") self.$emit("input", false);
     });
+  },
+
+  async created() {
+    this.clientList = await readClients();
+    this.productList = await readProducts();
   },
 };
 </script>

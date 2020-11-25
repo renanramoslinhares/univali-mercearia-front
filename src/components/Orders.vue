@@ -21,16 +21,15 @@
               <v-list-item
                 v-for="(element, index) in filtredList"
                 :key="index"
-                @click="$emit('input', { data: element })"
+                @click="$emit('input', { idEdit: element.id })"
               >
                 <v-list-item-content>
                   <v-list-item-title class="text-left">
-                    {{ element.clientName }}
-                    <span class="caption">R$ {{ element.totalValue }}</span>
+                    {{ element.client.name }}
                   </v-list-item-title>
-                  <!-- <v-list-item-subtitle class="text-left caption">
-                    {{ element.description }}
-                  </v-list-item-subtitle> -->
+                  <v-list-item-subtitle class="text-left caption">
+                    R$ {{ element.totalValue }}
+                  </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-icon>mdi-pencil-outline</v-icon>
@@ -45,110 +44,26 @@
 </template>
 
 <script>
-readOrders;
 import { readOrders } from "@/services/crudOrder.js";
 export default {
   name: "Orders",
   props: ["value"],
   data: () => ({
     search: "",
-    list: [
-      {
-        id: 1,
-        clientName: "Amanda",
-        // totalValue: 18,
-        items: [
-          {
-            productId: 5,
-            orderNumber: 0,
-            productAmount: 5,
-            productValue: 3,
-          },
-          {
-            productId: 3,
-            orderNumber: 1,
-            productAmount: 2,
-            productValue: 1.5,
-          },
-        ],
-      },
-      {
-        id: 2,
-        clientName: "Dona Clarice",
-        // totalValue: 21,
-        items: [
-          {
-            productId: 2,
-            orderNumber: 0,
-            productAmount: 3,
-            productValue: 7,
-          },
-        ],
-        isActive: true,
-      },
-      {
-        id: 3,
-        clientName: "Carlos Eduardo",
-        // totalValue: 9,
-        items: [
-          {
-            productId: 3,
-            orderNumber: 1,
-            productAmount: 2,
-            productValue: 4.5,
-          },
-        ],
-        isActive: true,
-      },
-      {
-        id: 4,
-        clientName: "Júlia",
-        // totalValue: 26,
-        items: [
-          {
-            productId: 5,
-            orderNumber: 0,
-            productAmount: 5,
-            productValue: 3,
-          },
-          {
-            productId: 3,
-            orderNumber: 1,
-            productAmount: 2,
-            productValue: 1.5,
-          },
-          {
-            productId: 7,
-            orderNumber: 1,
-            productAmount: 2,
-            productValue: 4,
-          },
-        ],
-        isActive: true,
-      },
-    ],
+    list: [],
   }),
   computed: {
     filtredList() {
-      const list = this.list.filter(
+      return this.list.filter(
         (element) =>
-          element.clientName.toLowerCase().indexOf(this.search.toLowerCase()) >
+          element.client.name.toLowerCase().indexOf(this.search.toLowerCase()) >
           -1
       );
-
-      list.forEach((element) => {
-        element.totalValue = element.items.reduce((acc, cur) => {
-          return cur.productValue * cur.productAmount + acc;
-        }, 0);
-      });
-
-      return list;
     },
   },
   methods: {
     async loadList() {
-      // this.list = await
-      readOrders();
+      this.list = await readOrders();
     },
   },
   watch: {

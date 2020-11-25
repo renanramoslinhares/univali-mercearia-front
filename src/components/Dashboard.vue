@@ -16,64 +16,55 @@
 
 <script>
 import Chart from "chart.js";
+import moment from "moment";
+import { readDashboard } from "@/services/readDashboard.js";
 
 export default {
   name: "Dashboard",
-  data: () => ({
-    params: {
+  data: () => ({}),
+  methods: {
+    loadGraph() {
+      return readDashboard().then((resp) => {
+        moment.locale("pt-br");
+        const listGraph = { values: [], labels: [] };
+        for (let index = 0; index < 7; index++) {
+          const date = moment().subtract(index, "days");
+          listGraph.labels.push(
+            date.format("dddd").charAt(0).toUpperCase() +
+              date.format("dddd").slice(1)
+          );
+          listGraph.values.push(
+            resp[date.format("l")] ? resp[date.format("l")] : 0
+          );
+        }
+        return listGraph;
+      });
+    },
+  },
+  async mounted() {
+    const ctx = document.getElementById("myChart").getContext("2d");
+    const color = "#33ff33aa";
+    const options = { scales: { yAxes: [{ tricks: { beginAtZero: true } }] } };
+    const resp = await this.loadGraph();
+    new Chart(ctx, {
       type: "bar",
       data: {
-        labels: [
-          "Domingo",
-          "Segunda",
-          "Terça",
-          "Quarta",
-          "Quinta",
-          "Sexta",
-          "Sábado",
-        ],
+        labels: resp.labels,
         datasets: [
           {
-            label: "Quantidade",
-            data: [0, 42, 35, 55, 30, 46, 23],
-            backgroundColor: [
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-            ],
-            borderColor: [
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-              "#33ff33aa",
-            ],
+            label: "Faturamento",
+            data: resp.values,
+            backgroundColor: [color, color, color, color, color, color, color],
+            borderColor: [color, color, color, color, color, color, color],
             borderWidth: 1,
           },
         ],
       },
-      options: {
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-        },
-      },
-    },
-  }),
-  mounted() {
-    const ctx = document.getElementById("myChart").getContext("2d");
-    new Chart(ctx, this.params);
+      options,
+    });
+  },
+  created() {
+    this.loadGraph();
   },
 };
 </script>

@@ -1,29 +1,26 @@
 const URL_API = "https://how4-challenge-api.herokuapp.com/";
+// const URL_API = "http://179.221.211.57:8000/";
 
-export const createElement = (path, body) => {
-  return fetch(URL_API + path, {
+export const createElement = (path, body) =>
+  fetch(URL_API + path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body,
-  });
-};
+    body: JSON.stringify(body),
+  }).then((result) => result.json());
 
-export const readList = (path) => {
-  return fetch(URL_API + path, {
+export const readData = (path) =>
+  fetch(URL_API + path, {
     method: "GET",
   }).then((response) => response.json());
-};
 
-export const updateElement = (path, body, elementId) => {
-  return fetch(URL_API + path + "/" + elementId, {
+export const updateElement = (path, body, elementId) =>
+  fetch(URL_API + path + "/" + elementId, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body,
-  });
-};
+    body: JSON.stringify(body),
+  }).then((response) => response.json());
 
-export const deleteElement = (path, elementId) => {
-  return fetch(URL_API + path + "/" + elementId, {
+export const deleteElement = (path, elementId) =>
+  fetch(URL_API + path + "/" + elementId, {
     method: "DELETE",
-  });
-};
+  }).then((response) => response.json());

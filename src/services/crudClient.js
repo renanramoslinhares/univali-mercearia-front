@@ -1,6 +1,6 @@
 import {
   createElement,
-  readList,
+  readData,
   updateElement,
   deleteElement,
 } from "./crudService.js";
@@ -14,7 +14,7 @@ export const createClient = (form) =>
   });
 
 export const readClients = () =>
-  readList("cliente").then((response) =>
+  readData("cliente").then((response) =>
     response.map((element) => ({
       email: element.de_email,
       created_at: element.dt_cadastro,

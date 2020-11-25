@@ -4,9 +4,14 @@
       :color="`${isError ? 'red' : 'indigo'} dark`"
       v-model="snackbar"
     >
-      {{ text }}
+      <div v-if="Array.isArray(content)">
+        <span v-for="(singleMessage, key) in content" :key="key">
+          {{ singleMessage }};<br />
+        </span>
+      </div>
+      <span v-else>{{ content }}</span>
 
-      <v-btn color="white" text @click="snackbar = false"> Fechar </v-btn>
+      <!-- <v-btn color="white" text @click="snackbar = false"> Fechar </v-btn> -->
     </v-snackbar>
   </div>
 </template>
@@ -14,12 +19,12 @@
 <script>
 export default {
   name: "AlertBar",
-  props: ["text", "isError"],
+  props: ["content", "isError"],
   data: () => ({
     snackbar: false,
   }),
   watch: {
-    text(value) {
+    content(value) {
       if (value) this.snackbar = true;
     },
   },

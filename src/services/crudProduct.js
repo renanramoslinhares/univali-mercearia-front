@@ -1,6 +1,6 @@
 import {
   createElement,
-  readList,
+  readData,
   updateElement,
   deleteElement,
 } from "./crudService.js";
@@ -8,13 +8,13 @@ import {
 export const createProduct = (form) =>
   createElement("produto", {
     st_inativo: form.isActive,
-    no_cliente: form.name,
-    de_email: form.email,
-    nu_cpf: form.cpf,
+    no_produto: form.name,
+    qt_estoque: Number(form.amount),
+    de_produto: form.description,
   });
 
 export const readProducts = () =>
-  readList("produto").then((response) =>
+  readData("produto").then((response) =>
     response.map((element) => ({
       id: element.id_produto,
       name: element.no_produto,
@@ -29,9 +29,9 @@ export const updateProduct = (form, elementId) =>
     "produto",
     {
       st_inativo: form.isActive,
-      no_cliente: form.name,
-      de_email: form.email,
-      nu_cpf: form.cpf,
+      no_produto: form.name,
+      qt_estoque: Number(form.amount),
+      de_produto: form.description,
     },
     elementId
   );

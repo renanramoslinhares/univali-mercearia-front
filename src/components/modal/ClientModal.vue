@@ -34,6 +34,7 @@
           type="text"
           outlined
           v-model="form.cpf"
+          v-mask="'###.###.###-##'"
         ></v-text-field>
         <v-btn class="col-3" color="purple" dark @click.stop="save()">
           Salvar
@@ -99,46 +100,30 @@ export default {
   methods: {
     save() {
       const selectedFunction = this.idEdit ? updateClient : createClient;
-      selectedFunction(this.form, this.idEdit)
-        .then((response) => {
-          console.log(
-            this.idEdit ? "updateClient" : "createClient",
-            " -> response",
-            response
-          );
-
-          this.$emit("alert", {
-            text: "Salvo com Sucesso!",
-            isError: false,
-          });
-        })
-        .catch((error) => {
-          console.error("Error: ", error);
-          this.$emit("alert", {
-            text: "Erro!",
-            isError: true,
-          });
+      selectedFunction(this.form, this.idEdit).then((resp) => {
+        if (!resp.errors) this.$emit("input", false);
+        this.$emit("alert", {
+          content: resp.errors ? resp.errors : "Salvo com Sucesso!",
+          isError: Boolean(resp.errors),
         });
+      });
     },
     async remove(idEdit) {
       await deleteClient(idEdit)
-        .then((response) => {
-          console.log("deleteClient -> response", response);
-
+        .then(() => {
           this.$emit("alert", {
-            text: "Removido com sucesso!",
+            content: "Removido com sucesso!",
             isError: false,
           });
+          this.$emit("input", false);
         })
-        .catch((error) => {
-          console.error("Error: ", error);
+        .catch(() => {
           this.$emit("alert", {
-            text: "Erro!",
+            content: "Erro!",
             isError: true,
           });
         });
       this.dialog = false;
-      this.$emit("input", false);
     },
   },
   watch: {

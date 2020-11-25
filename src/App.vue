@@ -49,7 +49,7 @@
         @alert="(value) => (alert = value)"
       />
       <component :is="contentComponent" v-model="dialog" />
-      <AlertBar :text="alert.text" :isError="alert.isError" />
+      <AlertBar :content="alert.content" :isError="alert.isError" />
     </v-main>
   </v-app>
 </template>
@@ -87,7 +87,7 @@ export default {
   data: () => ({
     alert: {
       isError: false,
-      text: "",
+      content: "",
     },
     contentComponent: "Dashboard",
     modalComponent: "",
