@@ -1,5 +1,4 @@
-const URL_API = "https://how4-challenge-api.herokuapp.com/";
-// const URL_API = "http://179.221.211.57:8000/";
+const URL_API = process.env.VUE_APP_BACKEND_URL;
 
 export const createElement = (path, body) =>
   fetch(URL_API + path, {
